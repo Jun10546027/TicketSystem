@@ -1,0 +1,4 @@
+下午 02:31:43 2021年11月24日
+  :Error occur in connect to db for get ticket data or sql query , the error message on the below: 
+	將 varchar 值 'Bug' 轉換成資料類型 int 時，轉換失敗。
+-------------------------------

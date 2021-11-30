@@ -1,0 +1,253 @@
+﻿@model IEnumerable<TicketInfoModel>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@Html.AntiForgeryToken()
+
+<style>
+    table {
+        border-spacing: 0;
+        width: 100%;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        cursor: pointer;
+    }
+
+    th, td {
+        text-align: left;
+        padding: 16px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2
+    }
+</style>
+
+<div style="padding-bottom:10px;">
+    @if (Context.User.Claims.FirstOrDefault(m => m.Type == "RoleStatus").Value == "4")
+    {
+        @*@Html.ActionLink("Create User", "CreateUser", "UpdateAlertForOCC", new { @class = "btn btn-primary" })*@
+        <a href='@Url.Action("Index", "UserInfoes")' class="btn btn-primary">Manage User</a>
+    }
+
+    @if (Context.User.Claims.FirstOrDefault(m => m.Type == "RoleStatus").Value == "1" ||
+         Context.User.Claims.FirstOrDefault(m => m.Type == "RoleStatus").Value == "3" ||
+         Context.User.Claims.FirstOrDefault(m => m.Type == "RoleStatus").Value == "4")
+    {
+        <a href='@Url.Action("Create", "TicketTables")' class="btn btn-primary">Create Ticket</a>
+        @*@Html.ActionLink("Create Ticket", "CreateTicket", "UpdateAlertForOCC", new { @class = "btn btn-primary" })*@
+    }
+</div>
+
+<div class="text-center">
+    <table id="ticketTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">CreateTime</th>
+                <th onclick="sortTable(1)">CreateUser</th>
+                <th onclick="sortTable(2)">Summary</th>
+                <th onclick="sortTable(3)">Description</th>
+                <th onclick="sortTable(4)">Severity</th>
+                <th onclick="sortTable(5)">Priority</th>
+                <th onclick="sortTable(6)">TicketType</th>
+                <th onclick="sortTable(7)">Resolved</th>
+                <th></th>
+            </tr>
+        </thead>
+        @foreach (var m in Model)
+        {
+            <tbody>
+                <tr style="color:black; background-color:white">
+                    <td>
+                        @m.DateTime
+                    </td>
+                    <td>
+                        @m.UserName
+                    </td>
+                    <td>
+                        @m.Summary
+                    </td>
+                    <td>
+                        @m.Description
+                    </td>
+                    <td>
+                        @m.Severity
+                    </td>
+                    <td>
+                        @m.Priority
+                    </td>
+                    <td>
+                        @m.TicketType
+                    </td>
+                    <td>
+                        @m.Resolved
+                    </td>
+                    @switch (Context.User.Claims.FirstOrDefault(m => m.Type == "RoleStatus").Value)
+                    {
+                        case "1":
+                            @if (m.TicketTypeId == 1 || m.TicketTypeId == 3)
+                            {
+                                <td>
+                                    @Html.ActionLink("Update", "Edit", "TicketTables", new { id = m.TicketId }, new { @class = "btn btn-primary" })
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Delete", "Delete", "TicketTables", new { id = m.TicketId }, new { @class = "btn btn-primary" })
+                                </td>
+                            }
+                            @if (m.TicketTypeId == 3 && !m.Resolved)
+                            {
+                                <td>
+                                    <button class="btn btn-primary" id="@m.TicketId" onclick="ComfirmResolved(@m.TicketId)">Resolve</button>
+                                </td>
+                            }
+                            break;
+                        case "2":
+                            @if ((m.TicketTypeId == 2 || m.TicketTypeId == 1) && !m.Resolved)
+                            {
+                                <td>
+                                    <button class="btn btn-primary" id="@m.TicketId" onclick="ComfirmResolved(@m.TicketId)">Resolve</button>
+                                </td>
+                            }
+                            break;
+                        case "3":
+                            @if (m.TicketTypeId == 2)
+                            {
+                                <td>
+                                    @Html.ActionLink("Update", "Edit", "TicketTables", new { id = m.TicketId }, new { @class = "btn btn-primary" })
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Delete", "Delete", "TicketTables", new { id = m.TicketId }, new { @class = "btn btn-primary" })
+                                </td>
+                            }
+                            break;
+                        case "4":
+
+                            <td>
+                                @Html.ActionLink("Update", "Edit", "TicketTables", new { id = m.TicketId }, new { @class = "btn btn-primary" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("Delete", "Delete", "TicketTables", new { id = m.TicketId }, new { @class = "btn btn-primary" })
+                            </td>
+                            <td>
+                                <button class="btn btn-primary" id="@m.TicketId" onclick="ComfirmResolved(@m.TicketId)">Resolve</button>
+                            </td>
+
+                            break;
+                    }
+                </tr>
+            </tbody>
+        }
+    </table>
+</div>
+
+<script rel="javascript" type="text/javascript" href="js/jquery-1.11.3.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#ticketTable').after('<div id="nav"></div>');
+        var rowsShown = 4;
+        var rowsTotal = $('#ticketTable tbody tr').length;
+        var numPages = rowsTotal / rowsShown;
+        for (i = 0; i < numPages; i++) {
+            var pageNum = i + 1;
+            $('#nav').append('<a href="#" rel="' + i + '">' + pageNum + '</a> ');
+        }
+        $('#ticketTable tbody tr').hide();
+        $('#ticketTable tbody tr').slice(0, rowsShown).show();
+        $('#nav a:first').addClass('active');
+        $('#nav a').bind('click', function () {
+
+            $('#nav a').removeClass('active');
+            $(this).addClass('active');
+            var currPage = $(this).attr('rel');
+            var startItem = currPage * rowsShown;
+            var endItem = startItem + rowsShown;
+            $('#ticketTable tbody tr').css('opacity', '0.0').hide().slice(startItem, endItem).
+                css('display', 'table-row').animate({ opacity: 1 }, 300);
+        });
+    });
+
+    function ComfirmResolved(ticketId) {
+        console.log(ticketId);
+        var a = { id: ticketId}
+        $.ajax({
+            type: "POST",
+            url: "/TicketTables/Resolve",
+            data: a,
+            contentType: 'application/x-www-form-urlencoded',
+            async: true,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("requestverificationtoken",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            success: function (data) {
+                if (data == "Correct") {
+                    alert("更新成功");
+                    window.location.reload();
+                }
+                else {
+                    alert("更新失敗")
+                }
+            },
+            error: function (errorData) { onError(errorData); }
+        });
+    }
+
+    function sortTable(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("ticketTable");
+        switching = true;
+        //Set the sorting direction to ascending:
+        dir = "asc";
+        /*Make a loop that will continue until
+        no switching has been done:*/
+        while (switching) {
+            //start by saying: no switching is done:
+            switching = false;
+            rows = table.rows;
+            /*Loop through all table rows (except the
+            first, which contains table headers):*/
+            for (i = 1; i < (rows.length - 1); i++) {
+                //start by saying there should be no switching:
+                shouldSwitch = false;
+                /*Get the two elements you want to compare,
+                one from current row and one from the next:*/
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                /*check if the two rows should switch place,
+                based on the direction, asc or desc:*/
+                if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        //if so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        //if so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                /*If a switch has been marked, make the switch
+                and mark that a switch has been done:*/
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                //Each time a switch is done, increase this count by 1:
+                switchcount++;
+            } else {
+                /*If no switching has been done AND the direction is "asc",
+                set the direction to "desc" and run the while loop again.*/
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+</script>

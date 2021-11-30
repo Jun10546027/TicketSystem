@@ -1,0 +1,32 @@
+下午 11:14:44 2021年11月29日
+  :Error occur in connect to db for get user information or sql query , the error message on the below: 
+	無效的物件名稱 'tickersystem.dbo.userinfo'。
+-------------------------------
+下午 11:16:12 2021年11月29日
+  :Error occur in connect to db for get user information or sql query , the error message on the below: 
+	無效的物件名稱 'tickersystem.dbo.userinfo'。
+-------------------------------
+下午 11:24:00 2021年11月29日
+  :Error occur in connect to db for get user information or sql query , the error message on the below: 
+	無效的物件名稱 'tickersystem.dbo.userinfo'。
+-------------------------------
+下午 11:24:05 2021年11月29日
+  :Error occur in connect to db for get user information or sql query , the error message on the below: 
+	無效的物件名稱 'tickersystem.dbo.userinfo'。
+-------------------------------
+下午 11:24:12 2021年11月29日
+  :Error occur in connect to db for get user information or sql query , the error message on the below: 
+	無效的物件名稱 'tickersystem.dbo.userinfo'。
+-------------------------------
+下午 11:24:23 2021年11月29日
+  :Error occur in connect to db for get user information or sql query , the error message on the below: 
+	無效的物件名稱 'tickersystem.dbo.userinfo'。
+-------------------------------
+下午 11:25:49 2021年11月29日
+  :Error occur in connect to db for get user information or sql query , the error message on the below: 
+	無效的物件名稱 'tickersystem.dbo.userinfo'。
+-------------------------------
+下午 11:26:06 2021年11月29日
+  :Error occur in connect to db for get user information or sql query , the error message on the below: 
+	無效的物件名稱 'tickersystem.dbo.userinfo'。
+-------------------------------

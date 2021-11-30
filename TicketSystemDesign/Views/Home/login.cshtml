@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    @using (Html.BeginForm("Login", "Login", new { ReturnUrl = Context.Request.Query["ReturnUrl"] }, FormMethod.Post, true, new { name = "myForm", autocomplete = "off" }))
+    {
+        <div>
+            <label>帳號：</label>@Html.TextBox("Account")
+        </div>
+        <div>
+            <label>密碼：</label>@Html.Password("pd")
+        </div>
+        <div>
+            <button type="submit">提交</button>
+        </div>
+        <div style="color:red;">
+            <!--顯示登入失敗訊息 -->
+            @ViewBag.errMsg
+        </div>
+    }
+</div>

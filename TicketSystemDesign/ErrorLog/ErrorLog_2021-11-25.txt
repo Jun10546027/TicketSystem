@@ -1,0 +1,8 @@
+下午 03:26:00 2021年11月25日
+  :Error occur in connect to db for get ticket data or sql query , the error message on the below: 
+	模稜兩可的資料行名稱 'UserId'。
+-------------------------------
+下午 03:27:07 2021年11月25日
+  :Error occur in connect to db for get ticket data or sql query , the error message on the below: 
+	Error parsing column 5 (UserName=QA1 - String)
+-------------------------------
